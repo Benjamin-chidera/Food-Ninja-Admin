@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
 
-const Login = () => {
+const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const {
     email,
@@ -44,7 +44,7 @@ const Login = () => {
         Cookies.set("deliveryId", data.deliveryId);
         setEmail("");
         setPassword("");
-        navigate("/delivery/dashboard");
+        navigate("/admin/food-ninja/dashboard");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -55,12 +55,12 @@ const Login = () => {
   };
 
   return (
-    <main>
+    <main className="bg-[#4CAF50] h-screen">
       {/* Login Content */}
-      <main className="container mx-auto md:py-16 px-4">
-        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+      <main className="container mx-auto md:py-16 px-4 flex items-center h-screen">
+        <div className=" mx-auto bg-white p-8 rounded-lg shadow-md w-[600px] max-w-full">
           <h2 className="text-3xl font-bold mb-6 text-center text-[#4CAF50]">
-            Login to Food Ninja
+            Welcome back Admin
           </h2>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
@@ -123,7 +123,7 @@ const Login = () => {
           </form>
           <div className="mt-4 text-center">
             <Link
-              to="/forgot-password"
+              to="/admin-food-ninja-forgot-password"
               className="text-[#4CAF50] hover:underline"
             >
               Forgot password?
@@ -133,7 +133,7 @@ const Login = () => {
             <p>
               Don't have an account?{" "}
               <Link
-                to="/signup"
+                to="/admin-food-ninja-signup"
                 className="text-[#4CAF50] font-semibold hover:underline"
               >
                 Sign up
@@ -148,4 +148,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

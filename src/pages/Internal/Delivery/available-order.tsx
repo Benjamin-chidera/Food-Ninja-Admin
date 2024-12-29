@@ -34,7 +34,7 @@ export default function AvailableOrders() {
   })
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-[#4CAF50]">Available Orders</h1>
       
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">

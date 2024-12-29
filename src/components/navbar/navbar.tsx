@@ -45,7 +45,7 @@ export const Navbar = () => {
                 {!isLoggedIn ? (
                   <NavLink to={"/login"}>Login</NavLink>
                 ) : (
-                  <NavLink to={"/delivery/dashboard/home"}>Dashboard</NavLink>
+                  <NavLink to={"/delivery/dashboard"}>Dashboard</NavLink>
                 )}
               </div>
             </div>
@@ -70,7 +70,7 @@ export const Navbar = () => {
                     Login
                   </NavLink>
                 ) : (
-                  <NavLink to={"/delivery/dashboard/home"}>Dashboard</NavLink>
+                  <NavLink to={"/delivery/dashboard"}>Dashboard</NavLink>
                 )}
               </div>
             </div>

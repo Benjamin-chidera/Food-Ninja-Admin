@@ -28,8 +28,11 @@ interface AuthStore {
   loading: boolean;
   setLoading: (value: boolean) => void;
 
-  showModal: boolean;
-  setShowModal: (value: boolean) => void;
+  showOTPModal: boolean;
+  setShowOTPModal: (value: boolean) => void;
+
+  showErrorModal: boolean;
+  setShowErrorModal: (value: boolean) => void;
 }
 
 export const useDeliveryAuthStore = create<AuthStore>((set) => ({
@@ -60,6 +63,9 @@ export const useDeliveryAuthStore = create<AuthStore>((set) => ({
   loading: false,
   setLoading: (value) => set(() => ({ loading: value })),
 
-  showModal: false,
-  setShowModal: (value) => set(() => ({ showModal: value })),
+  showOTPModal: false,
+  setShowOTPModal: (value) => set(() => ({ showOTPModal: value })),
+
+  showErrorModal: false,
+  setShowErrorModal: (value) => set(() => ({ showErrorModal: value })),
 }));

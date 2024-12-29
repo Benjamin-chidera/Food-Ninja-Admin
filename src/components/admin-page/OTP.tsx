@@ -64,7 +64,7 @@ export const OTP = () => {
       setShowOTPModal(false);
       setIsLoggedIn(true);
       Cookies.set("isLoggedIn", "true");
-      navigate("/delivery/dashboard/profile")
+      navigate("/admin/food-ninja/dashboard")
     }
   };
 
@@ -96,7 +96,7 @@ export const OTP = () => {
       <AlertDialog open={showOTPModal} onOpenChange={setShowOTPModal}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Verify your OTP</AlertDialogTitle>
+            <AlertDialogTitle>Verify your OTP Admin</AlertDialogTitle>
             <AlertDialogDescription className="flex justify-center items-center">
               <InputOTP
                 maxLength={4}

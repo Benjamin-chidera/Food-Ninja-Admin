@@ -13,7 +13,7 @@ import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import { OTP } from "@/components/delivery-page/OTP";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
 
-const Register = () => {
+const AdminRegister = () => {
   const {
     firstName,
     setFirstName,
@@ -93,10 +93,10 @@ const Register = () => {
   };
 
   return (
-    <main>
+    <main  className="bg-[#4CAF50] h-screen">
       {/* Sign Up Content */}
-      <section className="container mx-auto  px-4">
-        <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+      <section className="container mx-auto  px-4 flex items-center h-screen">
+        <div className=" mx-auto bg-white p-8 rounded-lg shadow-md w-[600px] max-w-full">
           <h2 className="text-3xl font-bold mb-6 text-center text-[#4CAF50]">
             Sign Up for Food Ninja
           </h2>
@@ -289,7 +289,7 @@ const Register = () => {
           {/* Login Link */}
           <p className="mt-4 text-center">
             Already have an account?{" "}
-            <Link to="/login" className="text-[#4CAF50] hover:underline">
+            <Link to="/admin-food-ninja-login" className="text-[#4CAF50] hover:underline">
               Log in
             </Link>
           </p>
@@ -302,4 +302,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default AdminRegister;

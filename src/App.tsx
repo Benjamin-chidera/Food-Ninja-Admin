@@ -26,6 +26,10 @@ import ManageOrder from "./pages/Internal/Admin/manage-order";
 import ManageUser from "./pages/Internal/Admin/manage-user";
 import AdminNotifications from "./pages/Internal/Admin/notifications";
 import Settings from "./pages/Internal/Admin/settings";
+import AdminLogin from "./pages/External/Auth/Admin/login";
+import AdminRegister from "./pages/External/Auth/Admin/register";
+import AdminForgotPassword from "./pages/External/Auth/Admin/forgot-password";
+import AdminResetPassword from "./pages/External/Auth/Admin/reset-password";
 
 function App() {
   return (
@@ -57,7 +61,16 @@ function App() {
           {/* This is the Delivery Internal Page */}
 
           {/* This is the auth route for the Admin Section */}
-          
+          <Route path="/admin-food-ninja-login" element={<AdminLogin />} />
+          <Route path="/admin-food-ninja-signup" element={<AdminRegister />} />
+          <Route
+            path="/admin-food-ninja-forgot-password"
+            element={<AdminForgotPassword />}
+          />
+          <Route
+            path="/admin-food-ninja-reset-password"
+            element={<AdminResetPassword />}
+          />
           {/* This is the auth route for the Admin Section */}
 
           {/* This is the admin Section */}
