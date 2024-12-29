@@ -83,7 +83,7 @@ const AdminForgotPassword = () => {
 
           <div className="mt-4 text-center">
             <Link
-              to="/admin-food-ninja-login"
+              to="/admin/food-ninja/login"
               className="text-[#4CAF50] hover:underline inline-flex items-center"
             >
               <ArrowRight size={16} className="mr-1" /> Back to Login

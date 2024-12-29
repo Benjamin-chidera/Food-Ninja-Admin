@@ -140,7 +140,7 @@ const AdminResetPassword = () => {
 
           <div className="mt-4 text-center">
             <Link
-              to="/admin-food-ninja-login"
+              to="/admin/food-ninja/login"
               className="text-[#4CAF50] hover:underline"
             >
               Back to Login
