@@ -42,6 +42,7 @@ const Login = () => {
 
       if (data.success) {
         Cookies.set("deliveryId", data.deliveryId);
+        Cookies.set("isLoggedIn", "true");
         setEmail("");
         setPassword("");
         navigate("/delivery/dashboard");
@@ -57,7 +58,7 @@ const Login = () => {
   return (
     <main>
       {/* Login Content */}
-      <main className="container mx-auto md:py-16 px-4">
+      <main className="container mx-auto md:py-16 px-4 ">
         <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-3xl font-bold mb-6 text-center text-[#4CAF50]">
             Login to Food Ninja

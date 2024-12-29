@@ -57,7 +57,8 @@ const Register = () => {
 
     try {
       if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        setError("Passwords do not match");
+        setShowErrorModal(true);
         return;
       }
 
@@ -95,7 +96,7 @@ const Register = () => {
   return (
     <main>
       {/* Sign Up Content */}
-      <section className="container mx-auto  px-4">
+      <section className="container mx-auto my-5  px-4">
         <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-3xl font-bold mb-6 text-center text-[#4CAF50]">
             Sign Up for Food Ninja

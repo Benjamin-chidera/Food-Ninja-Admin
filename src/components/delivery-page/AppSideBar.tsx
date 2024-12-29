@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -49,11 +49,13 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleLogout = () => {
     Cookies.remove("isLoggedIn");
-    navigate("/login");
+    Cookies.remove("deliveryId");
+    window.location.href = "/login";
+    // navigate("/login");
   };
 
   return (

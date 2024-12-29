@@ -25,7 +25,7 @@ const AdminLogin = () => {
   };
 
   useEffect(() => {
-    document.title = "Login | Food Ninja";
+    document.title = "Login | Food Ninja | Admin";
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ const AdminLogin = () => {
 
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login-delivery-person`,
+        `${import.meta.env.VITE_API_URL}/auth/login-admin`,
         {
           email,
           password,
@@ -41,7 +41,8 @@ const AdminLogin = () => {
       );
 
       if (data.success) {
-        Cookies.set("deliveryId", data.deliveryId);
+        Cookies.set("adminId", data.adminId);
+        Cookies.set("isLoggedIn", "true");
         setEmail("");
         setPassword("");
         navigate("/admin/food-ninja/dashboard");
@@ -123,7 +124,7 @@ const AdminLogin = () => {
           </form>
           <div className="mt-4 text-center">
             <Link
-              to="/admin-food-ninja-forgot-password"
+              to="/admin/food-ninja/forgot-password"
               className="text-[#4CAF50] hover:underline"
             >
               Forgot password?
@@ -133,7 +134,7 @@ const AdminLogin = () => {
             <p>
               Don't have an account?{" "}
               <Link
-                to="/admin-food-ninja-signup"
+                to="/admin/food-ninja/signup"
                 className="text-[#4CAF50] font-semibold hover:underline"
               >
                 Sign up

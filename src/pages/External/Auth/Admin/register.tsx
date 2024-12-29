@@ -57,12 +57,13 @@ const AdminRegister = () => {
 
     try {
       if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        setError("Passwords do not match");
+        setShowErrorModal(true);
         return;
       }
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth//register-delivery-person`,
+        `${import.meta.env.VITE_API_URL}/auth/register-admin`,
         {
           firstName,
           lastName,
@@ -72,7 +73,7 @@ const AdminRegister = () => {
       );
 
       if (data.success) {
-        cookies.set("deliveryId", data.deliveryId);
+        cookies.set("adminId", data.adminId);
         setFirstName("");
         setLastName("");
         setEmail("");

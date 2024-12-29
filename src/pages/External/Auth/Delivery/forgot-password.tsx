@@ -1,10 +1,43 @@
 import { ArrowRight, Mail } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
+import axios, { AxiosError } from "axios";
+import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
+import Cookies from "js-cookie";
 
 const ForgotPassword = () => {
+  const { email, setEmail, setError, setShowErrorModal } =
+    useDeliveryAuthStore();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/forgot-password-delivery-person`,
+        { email }
+      );
+
+      if (data.success) {
+        setEmail("");
+        Cookies.set("deliveryId", data.deliveryId);
+        navigate("/reset-password");
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        setError(error?.response?.data?.message);
+        setShowErrorModal(true);
+      }
+    }
+  };
+
   return (
     <div>
       {/* Forgot Password Content */}
@@ -14,7 +47,7 @@ const ForgotPassword = () => {
             Forgot Password
           </h2>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <div className="relative mt-1">
@@ -23,7 +56,8 @@ const ForgotPassword = () => {
                   id="email"
                   className="pl-10"
                   placeholder="Enter your email"
-                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <Mail
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -57,6 +91,8 @@ const ForgotPassword = () => {
           </div>
         </div>
       </main>
+
+      <ErrorModal />
     </div>
   );
 };

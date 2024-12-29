@@ -3,13 +3,58 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
+import Cookies from "js-cookie";
+import axios, { AxiosError } from "axios";
+import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
 
 const AdminResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const adminId = Cookies.get("adminId");
+  const navigate = useNavigate();
+
+  const {
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    setError,
+    setShowErrorModal,
+  } = useDeliveryAuthStore();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setShowErrorModal(true);
+      return;
+    }
+
+    try {
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/auth/reset-password/${adminId}/admin`,
+        { password }
+      );
+
+      if (data.success) {
+        setPassword("");
+        setConfirmPassword("");
+        navigate("/admin/food-ninja/login");
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        setError(error?.response?.data?.message);
+        setShowErrorModal(true);
+      }
+    }
   };
 
   return (
@@ -21,7 +66,7 @@ const AdminResetPassword = () => {
             Reset Password
           </h2>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="password">New Password</Label>
               <div className="relative mt-1">
@@ -30,7 +75,8 @@ const AdminResetPassword = () => {
                   id="password"
                   className="pl-10 pr-10"
                   placeholder="Enter new password"
-                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <Lock
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -53,7 +99,8 @@ const AdminResetPassword = () => {
                   id="confirmPassword"
                   className="pl-10"
                   placeholder="Confirm new password"
-                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <Lock
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -101,6 +148,8 @@ const AdminResetPassword = () => {
           </div>
         </div>
       </main>
+
+      <ErrorModal />
     </main>
   );
 };

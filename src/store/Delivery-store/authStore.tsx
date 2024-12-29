@@ -33,6 +33,9 @@ interface AuthStore {
 
   showErrorModal: boolean;
   setShowErrorModal: (value: boolean) => void;
+
+  userName: string;
+  setUserName: (value: string) => void;
 }
 
 export const useDeliveryAuthStore = create<AuthStore>((set) => ({
@@ -68,4 +71,7 @@ export const useDeliveryAuthStore = create<AuthStore>((set) => ({
 
   showErrorModal: false,
   setShowErrorModal: (value) => set(() => ({ showErrorModal: value })),
+
+  userName: "",
+  setUserName: (value) => set(() => ({ userName: value })),
 }));

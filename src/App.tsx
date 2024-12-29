@@ -38,7 +38,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/help-center" element={<Contact />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-services" element={<TermsOfService />} />
 
@@ -61,14 +61,14 @@ function App() {
           {/* This is the Delivery Internal Page */}
 
           {/* This is the auth route for the Admin Section */}
-          <Route path="/admin-food-ninja-login" element={<AdminLogin />} />
-          <Route path="/admin-food-ninja-signup" element={<AdminRegister />} />
+          <Route path="/admin/food-ninja/login" element={<AdminLogin />} />
+          <Route path="/admin/food-ninja/signup" element={<AdminRegister />} />
           <Route
-            path="/admin-food-ninja-forgot-password"
+            path="/admin/food-ninja/forgot-password"
             element={<AdminForgotPassword />}
           />
           <Route
-            path="/admin-food-ninja-reset-password"
+            path="/admin/food-ninja/reset-password"
             element={<AdminResetPassword />}
           />
           {/* This is the auth route for the Admin Section */}
