@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import Cookies from "js-cookie";
 
@@ -18,15 +18,16 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router";
+import { Loader } from "../loader/Loader";
 
 export const OTP = () => {
-  const { setShowOTPModal, showOTPModal, setIsLoggedIn } =
+  const { setShowOTPModal, showOTPModal, setIsLoggedIn, loading, setLoading } =
     useDeliveryAuthStore();
   const initialTime = 5 * 60; // Countdown starts at 5 minute
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const [otp, setOtp] = useState(""); // State to store the OTP input
@@ -51,20 +52,30 @@ export const OTP = () => {
 
   const handleConfirmOTP = async () => {
     const Id = Cookies.get("deliveryId");
+    setLoading(true);
 
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/auth/verify-delivery-person`,
-      {
-        deliveryId: Id,
-        otp,
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/verify-delivery-person`,
+        {
+          deliveryId: Id,
+          otp,
+        }
+      );
+
+      if (data.success) {
+        setShowOTPModal(false);
+        setIsLoggedIn(true);
+        setLoading(false);
+        Cookies.set("isLoggedIn", "true");
+        navigate("/delivery/dashboard/profile");
       }
-    );
-
-    if (data.success) {
-      setShowOTPModal(false);
-      setIsLoggedIn(true);
-      Cookies.set("isLoggedIn", "true");
-      navigate("/delivery/dashboard/profile")
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setLoading(false);
+        setShowOTPModal(true);
+        console.log(error?.response?.data?.message);
+      }
     }
   };
 
@@ -111,7 +122,7 @@ export const OTP = () => {
                 </InputOTPGroup>
                 {/* <InputOTPSeparator /> */}
                 {/* <InputOTPGroup> */}
-                  {/* <InputOTPSlot index={4} />
+                {/* <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} /> */}
                 {/* </InputOTPGroup> */}
               </InputOTP>
@@ -125,7 +136,7 @@ export const OTP = () => {
                     className="hover:underline text-blue-500"
                     onClick={handleResendOTP}
                   >
-                    Request new OTP
+                    {loading ? <Loader /> : "Request new OTP"}
                   </button>
                 </span>
               )}
@@ -141,7 +152,7 @@ export const OTP = () => {
               onClick={handleConfirmOTP}
               disabled={!isOTPComplete || timeLeft <= 0}
             >
-              Confirm OTP
+              {loading ? <Loader /> : "Confirm OTP"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

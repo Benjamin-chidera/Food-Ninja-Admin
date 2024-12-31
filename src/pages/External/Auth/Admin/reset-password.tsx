@@ -8,6 +8,7 @@ import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import Cookies from "js-cookie";
 import axios, { AxiosError } from "axios";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
+import { Loader } from "@/components/loader/Loader";
 
 const AdminResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,8 @@ const AdminResetPassword = () => {
     setConfirmPassword,
     setError,
     setShowErrorModal,
+    loading,
+    setLoading,
   } = useDeliveryAuthStore();
 
   const togglePasswordVisibility = () => {
@@ -29,6 +32,7 @@ const AdminResetPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -45,6 +49,7 @@ const AdminResetPassword = () => {
       if (data.success) {
         setPassword("");
         setConfirmPassword("");
+        setLoading(false);
         navigate("/admin/food-ninja/login");
       }
     } catch (error) {
@@ -52,6 +57,7 @@ const AdminResetPassword = () => {
 
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
+        setLoading(false);
         setShowErrorModal(true);
       }
     }
@@ -125,8 +131,9 @@ const AdminResetPassword = () => {
             <Button
               type="submit"
               className="w-full bg-[#4CAF50] hover:bg-[#45a049]"
+              disabled={!password || loading}
             >
-              Reset Password
+              {loading ? <Loader /> : "Reset Password"}
             </Button>
           </form>
 

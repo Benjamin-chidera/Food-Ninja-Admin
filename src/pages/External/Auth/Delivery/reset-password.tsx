@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
 import Cookies from "js-cookie";
+import { Loader } from "@/components/loader/Loader";
 
 const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +23,8 @@ const ResetPassword = () => {
     setConfirmPassword,
     setError,
     setShowErrorModal,
+    loading,
+    setLoading,
   } = useDeliveryAuthStore();
 
   const togglePasswordVisibility = () => {
@@ -30,6 +33,7 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -48,6 +52,7 @@ const ResetPassword = () => {
       if (data.success) {
         setPassword("");
         setConfirmPassword("");
+        setLoading(false);
         navigate("/login");
       }
     } catch (error) {
@@ -55,6 +60,7 @@ const ResetPassword = () => {
 
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
+        setLoading(false);
         setShowErrorModal(true);
       }
     }
@@ -128,8 +134,9 @@ const ResetPassword = () => {
             <Button
               type="submit"
               className="w-full bg-[#4CAF50] hover:bg-[#45a049]"
+              disabled={!password || loading}
             >
-              Reset Password
+              {loading ? <Loader /> : " Reset Password"}
             </Button>
           </form>
 

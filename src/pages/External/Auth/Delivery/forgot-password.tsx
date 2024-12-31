@@ -7,15 +7,17 @@ import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import axios, { AxiosError } from "axios";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
 import Cookies from "js-cookie";
+import { Loader } from "@/components/loader/Loader";
 
 const ForgotPassword = () => {
-  const { email, setEmail, setError, setShowErrorModal } =
+  const { email, setEmail, setError, setShowErrorModal, loading, setLoading } =
     useDeliveryAuthStore();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const { data } = await axios.post(
@@ -26,6 +28,7 @@ const ForgotPassword = () => {
       if (data.success) {
         setEmail("");
         Cookies.set("deliveryId", data.deliveryId);
+        setLoading(false);
         navigate("/reset-password");
       }
     } catch (error) {
@@ -33,6 +36,7 @@ const ForgotPassword = () => {
 
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
+        setLoading(false);
         setShowErrorModal(true);
       }
     }
@@ -68,8 +72,9 @@ const ForgotPassword = () => {
             <Button
               type="submit"
               className="w-full bg-[#4CAF50] hover:bg-[#45a049]"
+              disabled={!email || loading}
             >
-              Reset Password
+              {loading ? <Loader /> : "  Reset Password"}
             </Button>
           </form>
 

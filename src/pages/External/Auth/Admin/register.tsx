@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import axios, { AxiosError } from "axios";
 import cookies from "js-cookie";
 import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
-import { OTP } from "@/components/delivery-page/OTP";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
+import { OTP } from "@/components/admin-page/OTP";
+import { Loader } from "@/components/loader/Loader";
 
 const AdminRegister = () => {
   const {
@@ -30,6 +31,8 @@ const AdminRegister = () => {
     setShowOTPModal,
     setError,
     setShowErrorModal,
+    loading,
+    setLoading,
   } = useDeliveryAuthStore();
 
   // const [passwordRequirements, setPasswordRequirements] = useState({
@@ -54,6 +57,7 @@ const AdminRegister = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       if (password !== confirmPassword) {
@@ -80,21 +84,20 @@ const AdminRegister = () => {
         setPassword("");
         setConfirmPassword("");
         setTermsAndConditions(false);
-
+        setLoading(false);
         setShowOTPModal(true);
       }
     } catch (error) {
-      console.log(error);
-
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
         setShowErrorModal(true);
+        setLoading(false);
       }
     }
   };
 
   return (
-    <main  className="bg-[#4CAF50] h-screen">
+    <main className="bg-[#4CAF50] h-screen">
       {/* Sign Up Content */}
       <section className="container mx-auto  px-4 flex items-center h-screen">
         <div className=" mx-auto bg-white p-8 rounded-lg shadow-md w-[600px] max-w-full">
@@ -280,17 +283,21 @@ const AdminRegister = () => {
                 !password ||
                 !confirmPassword ||
                 !termsAndConditions ||
-                password !== confirmPassword
+                password !== confirmPassword ||
+                loading
               }
             >
-              Sign Up
+              {loading ? <Loader /> : "Sign Up"}
             </Button>
           </form>
 
           {/* Login Link */}
           <p className="mt-4 text-center">
             Already have an account?{" "}
-            <Link to="/admin-food-ninja-login" className="text-[#4CAF50] hover:underline">
+            <Link
+              to="/admin-food-ninja-login"
+              className="text-[#4CAF50] hover:underline"
+            >
               Log in
             </Link>
           </p>

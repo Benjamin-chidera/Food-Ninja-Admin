@@ -6,6 +6,7 @@ import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
+import { Loader } from "@/components/loader/Loader";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +17,8 @@ const AdminLogin = () => {
     setPassword,
     setError,
     setShowErrorModal,
+    loading,
+    setLoading,
   } = useDeliveryAuthStore();
 
   const navigate = useNavigate();
@@ -30,6 +33,7 @@ const AdminLogin = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const { data } = await axios.post(
@@ -45,11 +49,13 @@ const AdminLogin = () => {
         Cookies.set("isLoggedIn", "true");
         setEmail("");
         setPassword("");
+        setLoading(false);
         navigate("/admin/food-ninja/dashboard");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
+        setLoading(false);
         setShowErrorModal(true);
       }
     }
@@ -118,8 +124,9 @@ const AdminLogin = () => {
             <button
               type="submit"
               className="w-full bg-[#4CAF50] text-white font-bold py-2 px-4 rounded-md hover:bg-[#45a049] transition duration-300"
+              disabled={!email || !password || loading}
             >
-              Log In
+              {loading ? <Loader /> : " Log In"}
             </button>
           </form>
           <div className="mt-4 text-center">

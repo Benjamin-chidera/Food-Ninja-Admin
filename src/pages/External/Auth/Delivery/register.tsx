@@ -12,6 +12,7 @@ import cookies from "js-cookie";
 import { useDeliveryAuthStore } from "@/store/Delivery-store/authStore";
 import { OTP } from "@/components/delivery-page/OTP";
 import { ErrorModal } from "@/components/modals/Error-modal/ErrorModal";
+import { Loader } from "@/components/loader/Loader";
 
 const Register = () => {
   const {
@@ -30,6 +31,8 @@ const Register = () => {
     setShowOTPModal,
     setError,
     setShowErrorModal,
+    loading,
+    setLoading,
   } = useDeliveryAuthStore();
 
   // const [passwordRequirements, setPasswordRequirements] = useState({
@@ -54,6 +57,7 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       if (password !== confirmPassword) {
@@ -80,7 +84,7 @@ const Register = () => {
         setPassword("");
         setConfirmPassword("");
         setTermsAndConditions(false);
-
+        setLoading(false);
         setShowOTPModal(true);
       }
     } catch (error) {
@@ -88,6 +92,7 @@ const Register = () => {
 
       if (error instanceof AxiosError) {
         setError(error?.response?.data?.message);
+        setLoading(false);
         setShowErrorModal(true);
       }
     }
@@ -280,10 +285,11 @@ const Register = () => {
                 !password ||
                 !confirmPassword ||
                 !termsAndConditions ||
-                password !== confirmPassword
+                password !== confirmPassword ||
+                loading
               }
             >
-              Sign Up
+              {loading ? <Loader /> : "  Sign Up"}
             </Button>
           </form>
 
