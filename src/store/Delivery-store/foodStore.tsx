@@ -24,6 +24,9 @@ interface foodProps {
 
   isAvailable: boolean;
   setIsAvailable: (isAvailable: boolean) => void;
+
+  restaurant: string;
+  setRestaurant: (restaurant: string) => void;
 }
 
 export const useFoodStore = create<foodProps>((set) => ({
@@ -50,4 +53,7 @@ export const useFoodStore = create<foodProps>((set) => ({
 
   isAvailable: false,
   setIsAvailable: (isAvailable) => set(() => ({ isAvailable })),
+
+  restaurant: "",
+  setRestaurant: (restaurant) => set(() => ({ restaurant })),
 }));

@@ -43,6 +43,8 @@ const AddFood = () => {
     setTags,
     isAvailable,
     setIsAvailable,
+    restaurant,
+    setRestaurant,
   } = useFoodStore();
 
   console.log(isAvailable);
@@ -52,14 +54,14 @@ const AddFood = () => {
       setImage(file); // Update state with the selected file
     }
   };
-  
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!image) {
       alert("Please select an image file.");
       return;
     }
-    
+
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -68,18 +70,19 @@ const AddFood = () => {
       formData.append("description", description);
       formData.append("image", image); // Append the image file
       formData.append("category", category);
+      formData.append("restaurant", restaurant);
       formData.append("tags", tags.join(","));
       formData.append("isAvailable", isAvailable.toString());
-  
+
       const response = await axios.post(
         "http://localhost:3000/api/v1/food-ninja/food/create",
         formData
       );
-  
+
       console.log(response.data);
       alert("Food item added successfully!");
       setIsLoading(false);
-  
+
       // Reset form fields after successful submission
       setName("");
       setPrice(0);
@@ -94,7 +97,6 @@ const AddFood = () => {
       setIsLoading(false);
     }
   };
-  
 
   const addTag = () => {
     if (currentTag && !tags.includes(currentTag)) {
@@ -106,7 +108,6 @@ const AddFood = () => {
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
-
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -149,7 +150,7 @@ const AddFood = () => {
                   type="number"
                   step="0.01"
                   min="0"
-                  placeholder="0.00"
+                  
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
                 />
@@ -168,6 +169,26 @@ const AddFood = () => {
                     <SelectItem value="main-course">Main Course</SelectItem>
                     <SelectItem value="dessert">Dessert</SelectItem>
                     <SelectItem value="beverage">Beverage</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="restaurant">restaurant</Label>
+                <Select
+                  value={restaurant}
+                  onValueChange={(value) => setRestaurant(value)}
+                >
+                  <SelectTrigger id="restaurant">
+                    <SelectValue placeholder="Select restaurant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="burger-king">Burger King</SelectItem>
+                    <SelectItem value="kfc">KFC</SelectItem>
+                    <SelectItem value="chicken-republic">Chicken Republic</SelectItem>
+                    <SelectItem value="sweet-sensation">Sweet Sensation</SelectItem>
+                    <SelectItem value="tastee">Tastee</SelectItem>
+                    <SelectItem value="the-place">The Place</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
