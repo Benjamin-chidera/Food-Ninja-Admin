@@ -150,7 +150,6 @@ const AddFood = () => {
                   type="number"
                   step="0.01"
                   min="0"
-                  
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
                 />
@@ -165,10 +164,9 @@ const AddFood = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="appetizer">Appetizer</SelectItem>
-                    <SelectItem value="main-course">Main Course</SelectItem>
-                    <SelectItem value="dessert">Dessert</SelectItem>
-                    <SelectItem value="beverage">Beverage</SelectItem>
+                  <SelectItem value="breakfast">Breakfast</SelectItem>
+                <SelectItem value="lunch">Lunch</SelectItem>
+                <SelectItem value="dinner">Dinner</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -185,8 +183,12 @@ const AddFood = () => {
                   <SelectContent>
                     <SelectItem value="burger-king">Burger King</SelectItem>
                     <SelectItem value="kfc">KFC</SelectItem>
-                    <SelectItem value="chicken-republic">Chicken Republic</SelectItem>
-                    <SelectItem value="sweet-sensation">Sweet Sensation</SelectItem>
+                    <SelectItem value="chicken-republic">
+                      Chicken Republic
+                    </SelectItem>
+                    <SelectItem value="sweet-sensation">
+                      Sweet Sensation
+                    </SelectItem>
                     <SelectItem value="tastee">Tastee</SelectItem>
                     <SelectItem value="the-place">The Place</SelectItem>
                   </SelectContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -26,104 +26,54 @@ import {
   ChevronRight,
   Search,
 } from "lucide-react";
-
-// Mock data for food items
-const mockFoodItems = [
-  {
-    id: 1,
-    name: "Margherita Pizza",
-    category: "Main Course",
-    price: 12.99,
-    available: true,
-  },
-  {
-    id: 2,
-    name: "Caesar Salad",
-    category: "Appetizer",
-    price: 8.99,
-    available: true,
-  },
-  {
-    id: 3,
-    name: "Chocolate Brownie",
-    category: "Dessert",
-    price: 6.99,
-    available: false,
-  },
-  {
-    id: 4,
-    name: "Iced Tea",
-    category: "Beverage",
-    price: 3.99,
-    available: true,
-  },
-  {
-    id: 5,
-    name: "Chicken Alfredo",
-    category: "Main Course",
-    price: 15.99,
-    available: true,
-  },
-  {
-    id: 6,
-    name: "Garlic Bread",
-    category: "Appetizer",
-    price: 4.99,
-    available: true,
-  },
-  {
-    id: 7,
-    name: "Tiramisu",
-    category: "Dessert",
-    price: 7.99,
-    available: true,
-  },
-  {
-    id: 8,
-    name: "Espresso",
-    category: "Beverage",
-    price: 2.99,
-    available: true,
-  },
-  {
-    id: 9,
-    name: "Vegetable Stir Fry",
-    category: "Main Course",
-    price: 13.99,
-    available: false,
-  },
-  {
-    id: 10,
-    name: "Mozzarella Sticks",
-    category: "Appetizer",
-    price: 7.99,
-    available: true,
-  },
-];
+import axios from "axios";
+import { useFoodStore } from "@/store/Delivery-store/foodStore";
+import { io } from "socket.io-client";
+import { EditFood } from "@/components/admin-page/edit-food";
 
 const GetFood = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const { foods, setFoods, setIsEditing, setEditingFoodId } = useFoodStore();
+  const socket = io("http://localhost:3000");
 
-  const filteredItems = mockFoodItems.filter(
+  useEffect(() => {
+    const getFoods = async () => {
+      const { data } = await axios(
+        `http://localhost:3000/api/v1/food-ninja/food/all-food`
+      );
+
+      setFoods(data.foods);
+    };
+
+    getFoods();
+  }, []);
+
+  socket.on("food-created", (data) => {
+    setFoods((prevFoods) => [...prevFoods, data.food]);
+  });
+
+  const filteredItems = foods?.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (categoryFilter === "All" || item.category === categoryFilter)
+      item?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) &&
+      (categoryFilter === "All" || item?.category === categoryFilter)
   );
 
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredItems?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = filteredItems.slice(startIndex, endIndex);
+  const currentItems = filteredItems?.slice(startIndex, endIndex);
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     console.log(`Edit item with id: ${id}`);
+    setIsEditing(true);
+    setEditingFoodId(id);
     // Implement edit functionality
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     console.log(`Delete item with id: ${id}`);
     // Implement delete functionality
   };
@@ -153,10 +103,9 @@ const GetFood = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Categories</SelectItem>
-                <SelectItem value="Appetizer">Appetizer</SelectItem>
-                <SelectItem value="Main Course">Main Course</SelectItem>
-                <SelectItem value="Dessert">Dessert</SelectItem>
-                <SelectItem value="Beverage">Beverage</SelectItem>
+                <SelectItem value="breakfast">Breakfast</SelectItem>
+                <SelectItem value="lunch">Lunch</SelectItem>
+                <SelectItem value="dinner">Dinner</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -165,6 +114,7 @@ const GetFood = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Restaurant</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Available</TableHead>
@@ -172,20 +122,25 @@ const GetFood = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentItems.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>${item.price.toFixed(2)}</TableCell>
+              {currentItems?.map((item) => (
+                <TableRow key={item?._id}>
+                  <TableCell>{item?.name}</TableCell>
+                  <TableCell className=" capitalize">
+                    {item?.restaurant?.replace("-", " ")}
+                  </TableCell>
+                  <TableCell className=" capitalize">
+                    {item?.category}
+                  </TableCell>
+                  <TableCell>${item?.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
-                        item.available
+                        item?.isAvailable
                           ? "bg-green-200 text-green-800"
                           : "bg-red-200 text-red-800"
                       }`}
                     >
-                      {item.available ? "Yes" : "No"}
+                      {item?.isAvailable ? "Yes" : "No"}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -193,14 +148,14 @@ const GetFood = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => handleEdit(item?._id)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item?._id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -214,8 +169,8 @@ const GetFood = () => {
           <div className="flex justify-between items-center mt-4">
             <p className="text-sm text-gray-500">
               Showing {startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredItems.length)} of{" "}
-              {filteredItems.length} items
+              {Math.min(endIndex, filteredItems?.length)} of{" "}
+              {filteredItems?.length} items
             </p>
             <div className="flex space-x-2">
               <Button
@@ -240,6 +195,10 @@ const GetFood = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* this is for the edit food section and component */}
+      <EditFood />
+      {/* this is for the edit food section and component */}
     </div>
   );
 };

@@ -1,5 +1,17 @@
 import { create } from "zustand";
 
+interface Food {
+  _id: string;
+  name: string;
+  price: number;
+  restaurant: string;
+  category: string;
+  isAvailable: boolean;
+  image: string;
+  description: string;
+  tags: string[];
+}
+
 interface foodProps {
   name: string;
   setName: (name: string) => void;
@@ -27,6 +39,18 @@ interface foodProps {
 
   restaurant: string;
   setRestaurant: (restaurant: string) => void;
+
+  foods: Food[];
+  setFoods: (foods: []) => void;
+
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
+
+  editingFoodId: string | null;
+  setEditingFoodId: (id: string | null) => void;
+
+  foodDetails: Food | null;
+  setFoodDetails: (food: Food | null) => void;
 }
 
 export const useFoodStore = create<foodProps>((set) => ({
@@ -56,4 +80,16 @@ export const useFoodStore = create<foodProps>((set) => ({
 
   restaurant: "",
   setRestaurant: (restaurant) => set(() => ({ restaurant })),
+
+  foods: [],
+  setFoods: (foods) => set(() => ({ foods })),
+
+  isEditing: false,
+  setIsEditing: (isEditing) => set(() => ({ isEditing })),
+
+  editingFoodId: null,
+  setEditingFoodId: (id) => set({ editingFoodId: id }),
+
+  foodDetails: null,
+  setFoodDetails: (food) => set(() => ({ foodDetails: food })),
 }));
