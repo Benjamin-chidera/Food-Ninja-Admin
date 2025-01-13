@@ -47,7 +47,6 @@ const AddFood = () => {
     setRestaurant,
   } = useFoodStore();
 
-  console.log(isAvailable);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]; // Ensure file exists
     if (file) {
@@ -164,9 +163,9 @@ const AddFood = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                  <SelectItem value="breakfast">Breakfast</SelectItem>
-                <SelectItem value="lunch">Lunch</SelectItem>
-                <SelectItem value="dinner">Dinner</SelectItem>
+                    <SelectItem value="breakfast">Breakfast</SelectItem>
+                    <SelectItem value="lunch">Lunch</SelectItem>
+                    <SelectItem value="dinner">Dinner</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

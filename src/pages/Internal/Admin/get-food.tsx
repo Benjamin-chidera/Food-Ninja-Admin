@@ -39,15 +39,15 @@ const GetFood = () => {
   const { foods, setFoods, setIsEditing, setEditingFoodId } = useFoodStore();
   const socket = io("http://localhost:3000");
 
+  const getFoods = async () => {
+    const { data } = await axios(
+      `http://localhost:3000/api/v1/food-ninja/food/all-food`
+    );
+
+    setFoods(data.foods);
+  };
+
   useEffect(() => {
-    const getFoods = async () => {
-      const { data } = await axios(
-        `http://localhost:3000/api/v1/food-ninja/food/all-food`
-      );
-
-      setFoods(data.foods);
-    };
-
     getFoods();
   }, []);
 
@@ -73,9 +73,21 @@ const GetFood = () => {
     // Implement edit functionality
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     console.log(`Delete item with id: ${id}`);
-    // Implement delete functionality
+
+    try {
+      const { data } = await axios.delete(
+        `http://localhost:3000/api/v1/food-ninja/food/food/${id}`
+      );
+
+      if (data.success) {
+        console.log(data);
+        getFoods();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
