@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,125 +19,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Eye, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
-// Mock data for orders
-const mockOrders = [
-  {
-    id: "1001",
-    customer: "John Doe",
-    restaurant: "Joe's Diner",
-    items: 3,
-    total: 35.5,
-    status: "Delivered",
-    date: "2023-06-15",
-  },
-  {
-    id: "1002",
-    customer: "Jane Smith",
-    restaurant: "Pizza Palace",
-    items: 2,
-    total: 22.99,
-    status: "In Transit",
-    date: "2023-06-15",
-  },
-  {
-    id: "1003",
-    customer: "Bob Johnson",
-    restaurant: "Sushi Spot",
-    items: 4,
-    total: 48.75,
-    status: "Preparing",
-    date: "2023-06-14",
-  },
-  {
-    id: "1004",
-    customer: "Alice Brown",
-    restaurant: "Burger Barn",
-    items: 1,
-    total: 18.5,
-    status: "Delivered",
-    date: "2023-06-14",
-  },
-  {
-    id: "1005",
-    customer: "Charlie Davis",
-    restaurant: "Taco Town",
-    items: 3,
-    total: 27.25,
-    status: "Placed",
-    date: "2023-06-13",
-  },
-  {
-    id: "1006",
-    customer: "Eva Wilson",
-    restaurant: "Pasta Place",
-    items: 2,
-    total: 32.0,
-    status: "In Transit",
-    date: "2023-06-13",
-  },
-  {
-    id: "1007",
-    customer: "Frank Miller",
-    restaurant: "Salad Station",
-    items: 1,
-    total: 12.99,
-    status: "Delivered",
-    date: "2023-06-12",
-  },
-  {
-    id: "1008",
-    customer: "Grace Lee",
-    restaurant: "Donut Delight",
-    items: 6,
-    total: 15.5,
-    status: "Preparing",
-    date: "2023-06-12",
-  },
-  {
-    id: "1009",
-    customer: "Henry Taylor",
-    restaurant: "Smoothie Shack",
-    items: 2,
-    total: 9.98,
-    status: "Placed",
-    date: "2023-06-11",
-  },
-  {
-    id: "1010",
-    customer: "Ivy Martin",
-    restaurant: "Ice Cream Island",
-    items: 3,
-    total: 14.25,
-    status: "Delivered",
-    date: "2023-06-11",
-  },
-];
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import axios from "axios";
+import { useOrderStore } from "@/store/admin-stroe/orders";
 
 const ManageOrder = () => {
+  const { order, setOrder } = useOrderStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedOrder, setSelectedOrder] = useState<
-    (typeof mockOrders)[0] | null
-  >(null);
   const itemsPerPage = 5;
 
-  const filteredOrders = mockOrders.filter(
+  const url = import.meta.env.VITE_API_URL;
+
+  const getOrders = async () => {
+    try {
+      const { data } = await axios(`${url}/customer/orders`);
+
+      // console.log(data);
+      setOrder(data.order);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  // console.log(order);
+
+  const filteredOrders = order.filter(
     (order) =>
-      (order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.restaurant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.id.includes(searchTerm)) &&
+      (order?.user?.firstName
+        ?.toLowerCase()
+        ?.includes(searchTerm?.toLowerCase()) ||
+        order?.orderId?.includes(searchTerm)) &&
       (statusFilter === "All" || order.status === statusFilter)
   );
 
@@ -145,10 +63,6 @@ const ManageOrder = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentOrders = filteredOrders.slice(startIndex, endIndex);
-
-  const handleViewOrder = (order: (typeof mockOrders)[0]) => {
-    setSelectedOrder(order);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -207,35 +121,35 @@ const ManageOrder = () => {
                 <TableHead>Total</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.restaurant}</TableCell>
-                  <TableCell>${order.total.toFixed(2)}</TableCell>
+              {currentOrders?.map((item) => (
+                <TableRow key={item._id}>
+                  <TableCell className="font-medium">{item._id}</TableCell>
+                  <TableCell className=" capitalize">
+                    {item.user.firstName} {item.user.lastName}
+                  </TableCell>
+                  {item.item?.map((items) => (
+                    <TableCell className=" capitalize" key={item._id}>
+                      {items.restaurant}
+                    </TableCell>
+                  ))}
+
+                  <TableCell key={item._id}>
+                    ${item.totalAmount.toFixed(2)}
+                  </TableCell>
+
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
-                        order.status
+                        item.status
                       )}`}
                     >
-                      {order.status}
+                      {item.status || "Preparing"}
                     </span>
                   </TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewOrder(order)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
+                  <TableCell>{new Date(item.createdAt).getDate()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -270,65 +184,6 @@ const ManageOrder = () => {
           </div>
         </CardContent>
       </Card>
-
-      <Dialog
-        open={!!selectedOrder}
-        onOpenChange={() => setSelectedOrder(null)}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
-            <DialogDescription>
-              Detailed information about the selected order.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedOrder && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Order ID</Label>
-                <div className="col-span-3">{selectedOrder.id}</div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Customer</Label>
-                <div className="col-span-3">{selectedOrder.customer}</div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Restaurant</Label>
-                <div className="col-span-3">{selectedOrder.restaurant}</div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Items</Label>
-                <div className="col-span-3">{selectedOrder.items}</div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Total</Label>
-                <div className="col-span-3">
-                  ${selectedOrder.total.toFixed(2)}
-                </div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Status</Label>
-                <div className="col-span-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
-                      selectedOrder.status
-                    )}`}
-                  >
-                    {selectedOrder.status}
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Date</Label>
-                <div className="col-span-3">{selectedOrder.date}</div>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button onClick={() => setSelectedOrder(null)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

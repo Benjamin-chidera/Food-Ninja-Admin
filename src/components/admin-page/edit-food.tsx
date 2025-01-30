@@ -66,7 +66,7 @@ export const EditFood = () => {
         const { data } = await axios(
           `http://localhost:3000/api/v1/food-ninja/food/food/${editingFoodId}`
         );
-        console.log(data.food);
+        console.log(data);
         setName(data.food.name);
         setPrice(data.food.price);
         setDescription(data.food.description);
