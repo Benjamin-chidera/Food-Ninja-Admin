@@ -23,6 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import axios from "axios";
 import { useOrderStore } from "@/store/admin-stroe/orders";
+import { format } from "timeago.js";
 
 const ManageOrder = () => {
   const { order, setOrder } = useOrderStore();
@@ -149,7 +150,7 @@ const ManageOrder = () => {
                       {item.status || "Preparing"}
                     </span>
                   </TableCell>
-                  <TableCell>{new Date(item.createdAt).getDate()}</TableCell>
+                  <TableCell>{format(item.createdAt)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

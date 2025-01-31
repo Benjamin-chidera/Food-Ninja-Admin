@@ -19,13 +19,16 @@ export interface OrderPropsTypes {
   }[];
 }
 
-interface UserPropsTypes {
+export interface UserPropsTypes {
   _id: string;
   firstName: string;
   lastName: string;
   email: string;
   role: string;
   dateJoined: string;
+  status: string;
+  phoneNumber: string;
+  rating: number;
 }
 
 interface OrderProps {
@@ -34,6 +37,12 @@ interface OrderProps {
 
   users: UserPropsTypes[];
   setUsers: (users: UserPropsTypes[]) => void;
+
+  deliveryPerson: UserPropsTypes[];
+  setDeliveryPerson: (deliveryPerson: UserPropsTypes[]) => void;
+
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 export const useOrderStore = create<OrderProps>((set) => ({
@@ -42,4 +51,10 @@ export const useOrderStore = create<OrderProps>((set) => ({
 
   users: [],
   setUsers: (users) => set({ users }),
+
+  deliveryPerson: [],
+  setDeliveryPerson: (deliveryPerson) => set({ deliveryPerson }),
+
+  loading: false,
+  setLoading: (loading) => set({ loading }),
 }));

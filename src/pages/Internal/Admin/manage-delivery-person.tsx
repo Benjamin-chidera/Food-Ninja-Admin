@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -23,12 +23,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import {
   Pencil,
   Trash2,
@@ -37,67 +35,51 @@ import {
   Search,
   UserPlus,
 } from "lucide-react";
-
-// Mock data for delivery personnel
-const mockDeliveryPersonnel = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "(555) 123-4567",
-    status: "Active",
-    rating: 4.8,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    phone: "(555) 987-6543",
-    status: "Inactive",
-    rating: 4.5,
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    phone: "(555) 246-8135",
-    status: "Active",
-    rating: 4.9,
-  },
-  {
-    id: 4,
-    name: "Emily Brown",
-    email: "emily@example.com",
-    phone: "(555) 369-2580",
-    status: "Active",
-    rating: 4.7,
-  },
-  {
-    id: 5,
-    name: "Chris Wilson",
-    email: "chris@example.com",
-    phone: "(555) 147-2589",
-    status: "Inactive",
-    rating: 4.2,
-  },
-];
+import axios from "axios";
+import { DeliveryPersonEdit } from "@/components/admin-page/delivery-person-edit";
+import { useDeliveryStore } from "@/store/admin-stroe/delivery";
+import { AddNewDeliveryPerson } from "@/components/admin-page/add-new-delivery-person";
 
 const ManageDeliveryPerson = () => {
+  const url = import.meta.env.VITE_API_URL;
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newDeliveryPerson, setNewDeliveryPerson] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    status: "Active",
-  });
   const itemsPerPage = 5;
+  const {
+    deliveryPerson,
+    setDeliveryPerson,
+    loading: deliveryLoading,
+    setLoading: setDeliveryLoading,
+    setFirstName,
+    setLastName,
+    setEmail,
+    setPhoneNumber,
+    setStatus,
+    setOpen,
+    setDeliveryId,
+  } = useDeliveryStore();
 
-  const filteredPersonnel = mockDeliveryPersonnel.filter(
+  // get delivery person
+  const getDeliveryPerson = async () => {
+    try {
+      const { data } = await axios(`${url}/admin/get-all-delivery-person`);
+      setDeliveryPerson(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDeliveryPerson();
+  }, []);
+  // get delivery person
+
+  const filteredPersonnel = deliveryPerson?.filter(
     (person) =>
-      (person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (person.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         person.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (statusFilter === "All" || person.status === statusFilter)
   );
@@ -107,26 +89,48 @@ const ManageDeliveryPerson = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentPersonnel = filteredPersonnel.slice(startIndex, endIndex);
 
-  const handleEdit = (id: number) => {
-    console.log(`Edit delivery person with id: ${id}`);
+  const handleEdit = async (id: string) => {
+    // console.log(`Edit delivery person with id: ${id}`);
+    // setDeliveryLoading(true);
+    setOpen(true);
+
+    try {
+      const { data } = await axios(`${url}/admin/get-delivery-person/${id}`);
+      console.log(data);
+      setFirstName(data.firstName);
+      setLastName(data.lastName);
+      setEmail(data.email);
+      setPhoneNumber(data.phoneNumber);
+      setStatus(data.status);
+      setDeliveryId(id);
+
+      // setDeliveryLoading(false);
+      setOpen(true);
+    } catch (error) {
+      console.log(error);
+      // setDeliveryLoading(false);
+      setOpen(false);
+    }
+
     // Implement edit functionality
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     console.log(`Delete delivery person with id: ${id}`);
     // Implement delete functionality
   };
 
-  const handleAddDeliveryPerson = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Add new delivery person:", newDeliveryPerson);
-    // Implement add functionality
-    setIsAddDialogOpen(false);
-    setNewDeliveryPerson({ name: "", email: "", phone: "", status: "Active" });
-  };
+  // const handleAddDeliveryPerson = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("Add new delivery person:", newDeliveryPerson);
+  //   // Implement add functionality
+  //   setIsAddDialogOpen(false);
+  //   setNewDeliveryPerson({ name: "", email: "", phone: "", status: "Active" });
+  // };
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
+      <DeliveryPersonEdit />
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-2xl font-bold text-[#4CAF50]">
@@ -147,90 +151,7 @@ const ManageDeliveryPerson = () => {
                   when you're done.
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleAddDeliveryPerson}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={newDeliveryPerson.name}
-                      onChange={(e) =>
-                        setNewDeliveryPerson({
-                          ...newDeliveryPerson,
-                          name: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newDeliveryPerson.email}
-                      onChange={(e) =>
-                        setNewDeliveryPerson({
-                          ...newDeliveryPerson,
-                          email: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="phone" className="text-right">
-                      Phone
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={newDeliveryPerson.phone}
-                      onChange={(e) =>
-                        setNewDeliveryPerson({
-                          ...newDeliveryPerson,
-                          phone: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="status" className="text-right">
-                      Status
-                    </Label>
-                    <Select
-                      value={newDeliveryPerson.status}
-                      onValueChange={(value) =>
-                        setNewDeliveryPerson({
-                          ...newDeliveryPerson,
-                          status: value,
-                        })
-                      }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-[#4CAF50] hover:bg-[#45a049]"
-                  >
-                    Save
-                  </Button>
-                </DialogFooter>
-              </form>
+              <AddNewDeliveryPerson />
             </DialogContent>
           </Dialog>
         </CardHeader>
@@ -270,10 +191,12 @@ const ManageDeliveryPerson = () => {
             </TableHeader>
             <TableBody>
               {currentPersonnel.map((person) => (
-                <TableRow key={person.id}>
-                  <TableCell className="font-medium">{person.name}</TableCell>
+                <TableRow key={person._id}>
+                  <TableCell className="font-medium">
+                    {person.firstName} {person.lastName}
+                  </TableCell>
                   <TableCell>{person.email}</TableCell>
-                  <TableCell>{person.phone}</TableCell>
+                  <TableCell>{person.phoneNumber || "090"}</TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
@@ -291,14 +214,14 @@ const ManageDeliveryPerson = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEdit(person.id)}
+                        onClick={() => handleEdit(person._id)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(person.id)}
+                        onClick={() => handleDelete(person._id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

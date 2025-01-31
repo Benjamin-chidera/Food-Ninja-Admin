@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { useOrderStore } from "@/store/admin-stroe/orders";
+import { format } from "timeago.js";
 
 const ManageUser = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,7 +74,7 @@ const ManageUser = () => {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
 
-                  <TableCell>{user.dateJoined}</TableCell>
+                  <TableCell>{format(user.dateJoined)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
