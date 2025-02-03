@@ -56,7 +56,7 @@ export const OTP = () => {
 
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/verify-delivery-person`,
+        `${import.meta.env.VITE_API_URL}/delivery/verify-delivery-person`,
         {
           deliveryId: Id,
           otp,

@@ -20,13 +20,14 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Dot, Search } from "lucide-react";
 import axios from "axios";
 import { useOrderStore } from "@/store/admin-stroe/orders";
 import { format } from "timeago.js";
+import { AdminStatusOrderUpdate } from "@/components/admin-page/admin-order-status-update";
 
 const ManageOrder = () => {
-  const { order, setOrder } = useOrderStore();
+  const { order, setOrder, setOpen, open, setOrderId } = useOrderStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,6 +114,10 @@ const ManageOrder = () => {
             </Select>
           </div>
 
+          {/* this is for updating the order status */}
+          <AdminStatusOrderUpdate />
+          {/* this is for updating the order status */}
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -141,7 +146,13 @@ const ManageOrder = () => {
                     ${item.totalAmount.toFixed(2)}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell
+                    className=" cursor-pointer flex gap-1 items-center"
+                    onClick={() => {
+                      setOpen(!open);
+                      setOrderId(item._id);
+                    }}
+                  >
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
                         item.status
@@ -149,6 +160,8 @@ const ManageOrder = () => {
                     >
                       {item.status || "Preparing"}
                     </span>
+
+                    <Dot color="green" />
                   </TableCell>
                   <TableCell>{format(item.createdAt)}</TableCell>
                 </TableRow>

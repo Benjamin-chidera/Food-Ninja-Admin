@@ -36,6 +36,24 @@ interface AuthStore {
 
   userName: string;
   setUserName: (value: string) => void;
+
+  phoneNumber: string;
+  setPhoneNumber: (value: string) => void;
+
+  address: string;
+  setAddress: (value: string) => void;
+
+  vehicleType: string | boolean;
+  setVehicleType: (value: string) => void;
+
+  bio: string;
+  setBio: (value: string) => void;
+
+  status: boolean;
+  setStatus: (value: boolean) => void;
+
+  vehicleNumber: string;
+  setVehicleNumber: (value: string) => void;
 }
 
 export const useDeliveryAuthStore = create<AuthStore>((set) => ({
@@ -74,4 +92,22 @@ export const useDeliveryAuthStore = create<AuthStore>((set) => ({
 
   userName: "",
   setUserName: (value) => set(() => ({ userName: value })),
+
+  phoneNumber: "",
+  setPhoneNumber: (value) => set(() => ({ phoneNumber: value })),
+
+  address: "",
+  setAddress: (value) => set(() => ({ address: value })),
+
+  vehicleType: "",
+  setVehicleType: (value) => set(() => ({ vehicleType: value })),
+
+  vehicleNumber: "",
+  setVehicleNumber: (value) => set(() => ({ vehicleNumber: value })),
+
+  bio: "",
+  setBio: (value) => set(() => ({ bio: value })),
+
+  status: false,
+  setStatus: (value) => set(() => ({ status: value })),
 }));

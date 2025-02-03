@@ -67,7 +67,7 @@ const Register = () => {
       }
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth//register-delivery-person`,
+        `${import.meta.env.VITE_API_URL}/delivery/register-delivery-person`,
         {
           firstName,
           lastName,

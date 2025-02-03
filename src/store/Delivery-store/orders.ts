@@ -6,16 +6,23 @@ export interface OrderPropsTypes {
   createdAt: string;
   orderId: string;
   totalAmount: number;
+  address: string;
+  price: any;
+  distance: any;
+  estimatedTime: any;
 
   user: {
     firstName: string;
     lastName: string;
+    location: string;
   };
 
   item: {
     _id: string;
-    restaurant: string[];
+    restaurant: string;
     price: number;
+    distance: any;
+    estimatedTime: any;
   }[];
 }
 
